@@ -2,6 +2,9 @@ name: "Dependabot Automations"
 
 on:
   workflow_call:
+    secrets:
+      gh_token:
+        required: true
 
 jobs:
   auto-merge:
@@ -14,7 +17,7 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@v2
         with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          github-token: "${{ secrets.gh_token }}"
 
       - name: Approve and merge the pull request
         if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
@@ -23,4 +26,4 @@ jobs:
           gh pr merge --squash --auto "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.gh_token }}
